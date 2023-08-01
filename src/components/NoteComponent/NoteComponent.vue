@@ -29,7 +29,6 @@ const handleNewNoteChange = (event: any) => {
 
 const handleDeleteNote = (id: number) => {
   const index = listNotes.value.findIndex((note: any) => note.id === id)
-  console.log({ index, id })
   listNotes.value.splice(index, 1)
 }
 
