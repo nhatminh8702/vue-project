@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import NoteCardItem from './NoteCardItem.vue'
 import FormModal from '../Modal/FormModal.vue'
+import store from '@/store/index'
 
 const showModal = ref(false)
 const newNote = ref('')
-const listNotes = ref([
-  { id: 1, value: 'asdasdassadsdasdasdasdsadsda', date: '9/7/2022' },
-  { id: 2, value: 'asdasdassadsdasdasdasdsadsda', date: '9/7/2022' }
-])
+const listNotes = ref(store.state.listNotes)
 const uid = ref(listNotes.value.length + 1)
 
 const handleClickAddNote = () => {
@@ -30,11 +28,13 @@ const handleNewNoteChange = (event: any) => {
 }
 
 const handleDeleteNote = (id: number) => {
-  listNotes.value = listNotes.value.filter((note) => note.id !== id)
+  const index = listNotes.value.findIndex((note: any) => note.id === id)
+  console.log({ index, id })
+  listNotes.value.splice(index, 1)
 }
 
 const handleEditNote = (id: number, value: string) => {
-  const tempListNote = listNotes.value.map((note) => {
+  const tempListNote = listNotes.value.map((note: any) => {
     if (note.id === id) {
       return {
         id: note.id,
@@ -47,6 +47,10 @@ const handleEditNote = (id: number, value: string) => {
   })
   listNotes.value = tempListNote
 }
+
+watch(listNotes.value, () => {
+  store.commit('setListNotes', listNotes.value)
+})
 </script>
 
 <template>
