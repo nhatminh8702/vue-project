@@ -55,12 +55,11 @@ const handleValueChange = (event: any) => {
   background: #242424;
   border-radius: 4px;
   padding: 4px;
-  min-width: 200px;
-  min-height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   white-space: pre-wrap;
+  cursor: pointer;
 }
 
 .footer {
@@ -73,7 +72,7 @@ p {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 

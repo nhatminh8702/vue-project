@@ -1,11 +1,10 @@
-//Composition Api
 <script setup lang="ts">
-import NoteComponent from './components/NoteComponent/NoteComponent.vue'
+import NotePage from './pages/Note/NotePage.vue'
 </script>
 
 <template>
   <main>
-    <NoteComponent />
+    <NotePage />
   </main>
 </template>
 

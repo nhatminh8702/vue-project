@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import NoteCardItem from './NoteCardItem.vue'
-import FormModal from '../Modal/FormModal.vue'
-import store from '@/store/index'
+import store from '../../store/index'
+import NoteCardItem from '@/components/NoteComponent/NoteCardItem.vue'
+import FormModal from '@/components/Modal/FormModal.vue'
+import router from '@/router'
 
 const showModal = ref(false)
 const newNote = ref('')
@@ -10,7 +11,8 @@ const listNotes = ref(store.state.listNotes)
 const uid = ref(listNotes.value.length + 1)
 
 const handleClickAddNote = () => {
-  showModal.value = !showModal.value
+  router.push('note/add')
+  //showModal.value = !showModal.value
 }
 
 const handleAddNotes = () => {
@@ -65,7 +67,7 @@ watch(listNotes.value, () => {
         :date="note.date"
         :key="note.id"
         @on-delete="() => handleDeleteNote(note.id)"
-        @on-edit="(value) => handleEditNote(note.id, value)"
+        @on-edit="(value: any) => handleEditNote(note.id, value)"
       />
     </div>
     <div v-if="showModal">
@@ -87,12 +89,13 @@ watch(listNotes.value, () => {
   flex-direction: column;
   margin: auto;
   width: 100%;
+  max-width: 600px;
 }
 
 .cards-container {
   margin-top: 4px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 4px;
 }
