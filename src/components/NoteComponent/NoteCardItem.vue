@@ -1,49 +1,67 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-defineProps({
+import {ref} from 'vue'
+
+const {value, checked, date} = defineProps({
   value: String,
+  checked: Boolean,
   date: String
 })
-const emit = defineEmits(['onDelete', 'onEdit'])
+
+const emit = defineEmits(['onDelete', 'onEdit', 'onDetail'])
 
 const toggleEdit = ref(false)
-const defaultValue = ref('')
+const defaultValue = ref(value)
 
-const handleClickDeleteButton = () => {
-  emit('onDelete')
-}
-
-const handleEdit = () => {
-  emit('onEdit', defaultValue.value)
-  toggleEdit.value = !toggleEdit.value
-}
-
-const handletoggleEdit = () => {
+const handleToggleEdit = () => {
   toggleEdit.value = !toggleEdit.value
 }
 
 const handleValueChange = (event: any) => {
   defaultValue.value = event.target.value
 }
+
+const handle = (keyName: string) => {
+  switch (keyName) {
+    case 'onDetail': {
+      emit('onDetail')
+      break
+    }
+    case 'onDelete': {
+      emit('onDelete')
+      break
+    }
+    case 'onEdit': {
+      emit('onEdit', defaultValue.value)
+      toggleEdit.value = !toggleEdit.value
+      break
+    }
+  }
+}
+
 </script>
 
-<template lang="">
+<template>
   <div class="card">
-    <div v-if="toggleEdit">
-      <textarea @input="handleValueChange" :value="value"></textarea>
-    </div>
-    <div v-else>
-      <p class="main-text">{{ value }}</p>
+    <div class="body-content">
+      <div class="checked">
+        <input type="checkbox" :checked="checked">
+      </div>
+      <div v-if="toggleEdit">
+        <textarea @input="handleValueChange" :value="defaultValue"></textarea>
+      </div>
+      <div @click="handle('onDetail')" v-else>
+        <p class="main-text">{{ value }}</p>
+      </div>
     </div>
     <div class="footer">
       <p class="date">{{ date }}</p>
       <div v-if="toggleEdit" class="buttonGroups">
-        <button @click="handletoggleEdit">Cancel</button>
-        <button @click="handleEdit">Submit</button>
+        <button @click="handleToggleEdit">Cancel</button>
+        <button @click="handle('onEdit')">Submit</button>
       </div>
       <div v-else class="buttonGroups">
-        <button @click="handleClickDeleteButton">Delete</button>
-        <button @click="handletoggleEdit">Edit</button>
+        <button @click="handle('onDelete')">Delete</button>
+        <button @click="handleToggleEdit">Edit</button>
       </div>
     </div>
   </div>
@@ -60,6 +78,12 @@ const handleValueChange = (event: any) => {
   justify-content: space-between;
   white-space: pre-wrap;
   cursor: pointer;
+}
+
+.body-content {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 }
 
 .footer {

@@ -1,32 +1,39 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import {computed, ref, watch} from 'vue'
 import store from '../../store/index'
 import NoteCardItem from '@/components/NoteComponent/NoteCardItem.vue'
-import FormModal from '@/components/Modal/FormModal.vue'
-import router from '@/router'
+import {useRouter} from 'vue-router'
+import SearchBar from "@/components/inputField/SearchBar.vue";
+import InputSelector from "@/components/inputField/InputSelector.vue";
 
-const showModal = ref(false)
-const newNote = ref('')
+const listOptions = [{id: 1, label: 'All'}, {id: 2, label: 'Completed'}, {id: 3, label: 'On-Going'}]
+
 const listNotes = ref(store.state.listNotes)
-const uid = ref(listNotes.value.length + 1)
+const router = useRouter()
+const searchValue = ref('')
+const status = ref(listOptions[0])
 
-const handleClickAddNote = () => {
-  router.push('note/add')
-  //showModal.value = !showModal.value
-}
+const filteredListNote = computed(() => {
+  if (status.value.id === 2) {
+    return listNotes.value.filter((note: any) => note.value.includes(searchValue.value) && note.checked)
+  }
+  if (status.value.id === 3) {
+    return listNotes.value.filter((note: any) => note.value.includes(searchValue.value) && !note.checked)
+  }
+  return listNotes.value.filter((note: any) => note.value.includes(searchValue.value))
+})
 
-const handleAddNotes = () => {
-  listNotes.value.push({
-    id: uid.value,
-    value: newNote.value,
-    date: new Date().toLocaleDateString()
-  })
-  uid.value = uid.value + 1
-  newNote.value = ''
-}
-
-const handleNewNoteChange = (event: any) => {
-  newNote.value = event.target.value
+const handleRouting = (keyName: string) => {
+  switch (keyName) {
+    case 'note-add': {
+      router.push({name: 'note-add'})
+      break
+    }
+    case 'note-detail': {
+      router.push({name: 'note-detail'})
+      break
+    }
+  }
 }
 
 const handleDeleteNote = (id: number) => {
@@ -35,7 +42,7 @@ const handleDeleteNote = (id: number) => {
 }
 
 const handleEditNote = (id: number, value: string) => {
-  const tempListNote = listNotes.value.map((note: any) => {
+  listNotes.value = listNotes.value.map((note: any) => {
     if (note.id === id) {
       return {
         id: note.id,
@@ -46,39 +53,58 @@ const handleEditNote = (id: number, value: string) => {
       return note
     }
   })
-  listNotes.value = tempListNote
+}
+
+const handleValueChange = (keyName: String, value: any) => {
+  switch (keyName) {
+    case 'searchValue': {
+      searchValue.value = value
+      break;
+    }
+    case 'statusValue': {
+      status.value = value
+      break;
+    }
+  }
 }
 
 watch(listNotes.value, () => {
   store.commit('setListNotes', listNotes.value)
 })
+
 </script>
 
 <template>
   <div class="container">
     <header>
-      <h2>Notes</h2>
-      <button @click="handleClickAddNote">+ Add Note</button>
+      <div class="header-content">
+        <h2>Notes</h2>
+        <button @click="handleRouting('add-note')">+ Add Note</button>
+      </div>
+      <div class="header-util">
+        <SearchBar
+            :value="searchValue"
+            @onSearch="(value)=>handleValueChange('searchValue', value)"
+        />
+        <InputSelector
+            @on-option-change="(value:any)=>handleValueChange('statusValue', value)"
+            :place-holder="'select status...'"
+            :value="status.label"
+            :listOption="listOptions"
+        />
+      </div>
     </header>
     <div class="cards-container">
       <NoteCardItem
-        v-for="note in listNotes"
-        :value="note.value"
-        :date="note.date"
-        :key="note.id"
-        @on-delete="() => handleDeleteNote(note.id)"
-        @on-edit="(value: any) => handleEditNote(note.id, value)"
+          v-for="note in filteredListNote"
+          :value="note.value"
+          :date="note.date"
+          :checked="note.checked"
+          :key="note.id"
+          @on-delete="() => handleDeleteNote(note.id)"
+          @on-edit="(value: any) => handleEditNote(note.id, value)"
+          @on-detail="() => handleRouting('note-detail')"
       />
-    </div>
-    <div v-if="showModal">
-      <FormModal
-        title="Add New Note"
-        button="submit"
-        @toggle-modal="handleClickAddNote"
-        @submit="handleAddNotes"
-      >
-        <textarea @input="handleNewNoteChange" :value="newNote"></textarea>
-      </FormModal>
     </div>
   </div>
 </template>
@@ -111,17 +137,31 @@ button {
 }
 
 header {
+  border-bottom: 1px var(--color-text) solid;
+  padding: 4px;
+}
+
+.header-content {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 16px;
-  border-bottom: 1px var(--color-text) solid;
-  padding: 4px;
+}
+
+.header-util {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+
+  :first-child {
+    flex: 1;
+  }
 }
 
 h2 {
   flex: 1;
 }
+
 textarea {
   resize: vertical;
   width: 100%;

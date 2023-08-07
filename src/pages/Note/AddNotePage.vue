@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
-<template lang="">
-  <div>add</div>
+<template>
+  <div>asdasds</div>
 </template>
 
 <style></style>

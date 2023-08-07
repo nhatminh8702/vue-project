@@ -1,22 +1,28 @@
 import NotePage from '@/pages/Note/NotePage.vue'
 import AddNotePage from '@/pages/Note/AddNotePage.vue'
-import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
-const routes = [
-  {
-    path: '/note',
-    component: NotePage,
-    children: [
-      {
-        path: 'add',
-        component: AddNotePage
-      }
-    ]
-  }
-]
+import {createRouter, createWebHistory} from 'vue-router'
+import NoteDetail from "@/pages/Note/NoteDetail.vue";
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes: routes
+    history: createWebHistory(),
+    routes: [
+        {
+            path: '/',
+            name: 'note',
+            component: NotePage,
+
+        },
+        {
+            path: '/note-add',
+            name: 'note-add',
+            component: AddNotePage
+        },
+        {
+            path: '/note-detail',
+            name: 'note-detail',
+            component: NoteDetail
+        }
+    ]
 })
 
 export default router

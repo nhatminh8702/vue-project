@@ -1,10 +1,8 @@
-<script setup lang="ts">
-import NotePage from './pages/Note/NotePage.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <main>
-    <NotePage />
+    <router-view/>
   </main>
 </template>
 
