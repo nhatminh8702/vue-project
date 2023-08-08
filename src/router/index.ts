@@ -18,9 +18,10 @@ const router = createRouter({
             component: AddNotePage
         },
         {
-            path: '/note-detail',
+            path: '/note-detail/:id',
             name: 'note-detail',
-            component: NoteDetail
+            component: NoteDetail,
+            props: true
         }
     ]
 })

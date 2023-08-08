@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {computed, ref, watch} from 'vue'
-import store from '../../store/index'
+import {computed, onMounted, ref, watch} from 'vue'
+import {useStore} from 'vuex'
 import NoteCardItem from '@/components/NoteComponent/NoteCardItem.vue'
 import {useRouter} from 'vue-router'
 import SearchBar from "@/components/inputField/SearchBar.vue";
@@ -8,7 +8,8 @@ import InputSelector from "@/components/inputField/InputSelector.vue";
 
 const listOptions = [{id: 1, label: 'All'}, {id: 2, label: 'Completed'}, {id: 3, label: 'On-Going'}]
 
-const listNotes = ref(store.state.listNotes)
+const store = useStore()
+const listNotes = computed(() => store.getters.getListNotes)
 const router = useRouter()
 const searchValue = ref('')
 const status = ref(listOptions[0])
@@ -23,22 +24,22 @@ const filteredListNote = computed(() => {
   return listNotes.value.filter((note: any) => note.value.includes(searchValue.value))
 })
 
-const handleRouting = (keyName: string) => {
+const handleRouting = (keyName: string, value?: any) => {
   switch (keyName) {
     case 'note-add': {
       router.push({name: 'note-add'})
       break
     }
     case 'note-detail': {
-      router.push({name: 'note-detail'})
+      router.push({name: 'note-detail', params: {id: value}})
       break
     }
   }
 }
 
 const handleDeleteNote = (id: number) => {
-  const index = listNotes.value.findIndex((note: any) => note.id === id)
-  listNotes.value.splice(index, 1)
+  store.dispatch('deleteNote',id)
+  store.dispatch('getListNote')
 }
 
 const handleEditNote = (id: number, value: string) => {
@@ -68,8 +69,16 @@ const handleValueChange = (keyName: String, value: any) => {
   }
 }
 
+const handleCheckNote = (id: number, value: boolean) => {
+  listNotes.value.find((note: any) => note.id === id).checked = value
+}
+
 watch(listNotes.value, () => {
   store.commit('setListNotes', listNotes.value)
+})
+
+onMounted(() => {
+  store.dispatch('getListNote')
 })
 
 </script>
@@ -79,7 +88,7 @@ watch(listNotes.value, () => {
     <header>
       <div class="header-content">
         <h2>Notes</h2>
-        <button @click="handleRouting('add-note')">+ Add Note</button>
+        <button @click="handleRouting('note-add')">+ Add Note</button>
       </div>
       <div class="header-util">
         <SearchBar
@@ -102,8 +111,8 @@ watch(listNotes.value, () => {
           :checked="note.checked"
           :key="note.id"
           @on-delete="() => handleDeleteNote(note.id)"
-          @on-edit="(value: any) => handleEditNote(note.id, value)"
-          @on-detail="() => handleRouting('note-detail')"
+          @on-detail="() => handleRouting('note-detail', note.id)"
+          @on-check="(value: boolean) => handleCheckNote(note.id,value)"
       />
     </div>
   </div>
@@ -142,6 +151,7 @@ header {
 }
 
 .header-content {
+  flex: 1;
   display: flex;
   flex-direction: row;
   align-items: center;

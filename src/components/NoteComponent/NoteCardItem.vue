@@ -7,17 +7,16 @@ const {value, checked, date} = defineProps({
   date: String
 })
 
-const emit = defineEmits(['onDelete', 'onEdit', 'onDetail'])
-
-const toggleEdit = ref(false)
+const emit = defineEmits(['onDelete', 'onEdit', 'onDetail', 'onCheck'])
 const defaultValue = ref(value)
 
-const handleToggleEdit = () => {
-  toggleEdit.value = !toggleEdit.value
-}
-
-const handleValueChange = (event: any) => {
-  defaultValue.value = event.target.value
+const handleValueChange = (keyName: String, event: any) => {
+  if (keyName === 'value') {
+    defaultValue.value = event.target.value
+  }
+  if (keyName === 'checked') {
+    emit('onCheck', !checked)
+  }
 }
 
 const handle = (keyName: string) => {
@@ -30,9 +29,8 @@ const handle = (keyName: string) => {
       emit('onDelete')
       break
     }
-    case 'onEdit': {
-      emit('onEdit', defaultValue.value)
-      toggleEdit.value = !toggleEdit.value
+    case 'onCheck': {
+      emit('onCheck', !checked)
       break
     }
   }
@@ -44,24 +42,16 @@ const handle = (keyName: string) => {
   <div class="card">
     <div class="body-content">
       <div class="checked">
-        <input type="checkbox" :checked="checked">
+        <input type="checkbox" @input="handleValueChange('checked')" :checked="checked">
       </div>
-      <div v-if="toggleEdit">
-        <textarea @input="handleValueChange" :value="defaultValue"></textarea>
-      </div>
-      <div @click="handle('onDetail')" v-else>
-        <p class="main-text">{{ value }}</p>
+      <div class="main-text" @click="handle('onDetail')" >
+        {{ value }}
       </div>
     </div>
     <div class="footer">
       <p class="date">{{ date }}</p>
-      <div v-if="toggleEdit" class="buttonGroups">
-        <button @click="handleToggleEdit">Cancel</button>
-        <button @click="handle('onEdit')">Submit</button>
-      </div>
-      <div v-else class="buttonGroups">
+      <div class="buttonGroups">
         <button @click="handle('onDelete')">Delete</button>
-        <button @click="handleToggleEdit">Edit</button>
       </div>
     </div>
   </div>
@@ -77,13 +67,17 @@ const handle = (keyName: string) => {
   flex-direction: column;
   justify-content: space-between;
   white-space: pre-wrap;
-  cursor: pointer;
 }
 
 .body-content {
   display: flex;
   flex-direction: row;
   gap: 8px;
+}
+
+.main-text {
+  flex: 1;
+  cursor: pointer;
 }
 
 .footer {

@@ -17,9 +17,9 @@ const handleToggleDropDown = () => {
 }
 
 const handleClickOption = (id: number) => {
-  const _option = listOption.find((option: any) => option.id === id)
-  defaultValue.value = _option.label
-  emit('on-option-change', _option)
+  const option = listOption.find((option: any) => option.id === id)
+  defaultValue.value = option.label
+  emit('on-option-change', option)
   handleToggleDropDown()
 }
 </script>
@@ -34,9 +34,12 @@ const handleClickOption = (id: number) => {
       <icon-drop-down/>
     </div>
     <div v-if="toggleOption" class="selector-list-option">
-      <div class="option" v-for="option in listOptionFiltered" @click="handleClickOption(option.id)">{{
-          option.label
-        }}
+      <div
+          class="option"
+          v-for="option in listOptionFiltered"
+          :key="option.id"
+          @click="handleClickOption(option.id)"
+      >{{option.label }}
       </div>
     </div>
   </div>
