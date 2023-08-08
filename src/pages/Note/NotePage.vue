@@ -38,22 +38,8 @@ const handleRouting = (keyName: string, value?: any) => {
 }
 
 const handleDeleteNote = (id: number) => {
-  store.dispatch('deleteNote',id)
+  store.dispatch('deleteNote', id)
   store.dispatch('getListNote')
-}
-
-const handleEditNote = (id: number, value: string) => {
-  listNotes.value = listNotes.value.map((note: any) => {
-    if (note.id === id) {
-      return {
-        id: note.id,
-        value,
-        date: new Date().toLocaleDateString()
-      }
-    } else {
-      return note
-    }
-  })
 }
 
 const handleValueChange = (keyName: String, value: any) => {
@@ -69,8 +55,10 @@ const handleValueChange = (keyName: String, value: any) => {
   }
 }
 
-const handleCheckNote = (id: number, value: boolean) => {
-  listNotes.value.find((note: any) => note.id === id).checked = value
+const handleCheckNote = (id: number) => {
+  const note = listNotes.value.find((note: any) => note.id === id)
+  store.dispatch('updateNote', {...note,checked: !note.checked, })
+  store.dispatch('getListNote')
 }
 
 watch(listNotes.value, () => {
@@ -112,7 +100,7 @@ onMounted(() => {
           :key="note.id"
           @on-delete="() => handleDeleteNote(note.id)"
           @on-detail="() => handleRouting('note-detail', note.id)"
-          @on-check="(value: boolean) => handleCheckNote(note.id,value)"
+          @on-check="() => handleCheckNote(note.id)"
       />
     </div>
   </div>
@@ -128,6 +116,7 @@ onMounted(() => {
 }
 
 .cards-container {
+  position: relative;
   margin-top: 4px;
   display: flex;
   flex-direction: column;

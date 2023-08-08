@@ -23,10 +23,11 @@ const handle = (keyName: String, value?: any) => {
     case 'onSubmit': {
       const note = {
         id: id,
-        value: noteValue,
+        value: textAreaValue.value,
         date: noteDate
       }
       store.dispatch('updateNote',note)
+      store.dispatch('getListNote')
       toggleEdit.value = !toggleEdit.value
       break
     }
@@ -41,7 +42,6 @@ const handle = (keyName: String, value?: any) => {
     <header>
       <div class="header-content">
         <h2>Notes</h2>
-
       </div>
       <div class="footer">
         <div class="date">Created: {{noteDate }}</div>
@@ -56,9 +56,9 @@ const handle = (keyName: String, value?: any) => {
     </header>
     <div class="cards-container">
       <div v-if="toggleEdit">
-        <textarea @input="(event)=>handle('textArea', event.target.value)" :value="noteValue"></textarea>
+        <textarea @input="(event)=>handle('textArea', event.target.value)" :value="textAreaValue"></textarea>
       </div>
-      <p class="content" v-else> {{ noteValue }}</p>
+      <p class="content" v-else> {{ textAreaValue }}</p>
     </div>
   </div>
 </template>

@@ -24,12 +24,12 @@ const store = createStore({
     },
     actions: {
         getListNote({commit, state}) {
-            fetch('api/notes').then((res) => res.json()).then((json) => {
+            fetch('/api/notes').then((res) => res.json()).then((json) => {
                 commit('setListNotes', json.notes)
             })
         },
         addNote({commit, state},note) {
-            fetch('api/add-note', {
+            fetch('/api/add-note', {
                 method: "POST",
                 body: JSON.stringify({
                     value: note.value,
@@ -38,15 +38,13 @@ const store = createStore({
             })
         },
         updateNote({commit, state},note) {
-            fetch('api/update-notes', {
+            fetch(`/api/update-notes/${note.id}`, {
                 method: "POST",
-                body: JSON.stringify({
-                    value: note.value
-                }),
+                body: JSON.stringify(note),
             })
         },
         deleteNote({commit, state},id) {
-            fetch(`api/delete-note/${id}`, {
+            fetch(`/api/delete-note/${id}`, {
                 method: "DELETE",
             })
         }

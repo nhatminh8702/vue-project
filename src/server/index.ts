@@ -21,9 +21,10 @@ export function makeServer({environment = "development"} = {}) {
                 attrs.id = newId++
                 return schema.notes.create(attrs);
             });
-            this.post("/api/update-notes", (schema, request) => {
+            this.post("/api/update-notes/:id", (schema, request) => {
                 let attr = JSON.parse(request.requestBody)
-                return schema.notes.find(attr.id).update({value: attr.value});
+                let id = request.params.id;
+                return schema.notes.find(id).update(attr);
             });
             this.delete("/api/delete-note/:id", (schema, request) => {
                 let id = request.params.id;

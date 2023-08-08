@@ -7,7 +7,7 @@ const {value, checked, date} = defineProps({
   date: String
 })
 
-const emit = defineEmits(['onDelete', 'onEdit', 'onDetail', 'onCheck'])
+const emit = defineEmits(['onDelete', 'onDetail', 'onCheck'])
 const defaultValue = ref(value)
 
 const handleValueChange = (keyName: String, event: any) => {
@@ -30,7 +30,7 @@ const handle = (keyName: string) => {
       break
     }
     case 'onCheck': {
-      emit('onCheck', !checked)
+      emit('onCheck')
       break
     }
   }
